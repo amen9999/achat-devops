@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+    
+    tools {
+        maven 'M2_HOME'
+        jdk 'JAVA_HOME'
+    }
+    
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/amen9999/achat-devops.git'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'cd achat/achat && mvn clean package -DskipTests'
+            }
+        }
+        
+        stage('Tests') {
+            steps {
+                sh 'cd achat/achat && mvn test'
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Pipeline exécuté avec succès !'
+        }
+        failure {
+            echo 'Pipeline échoué !'
+        }
+    }
+}
