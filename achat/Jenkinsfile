@@ -2,37 +2,53 @@ pipeline {
     agent any
     
     tools {
-        maven 'M2_HOME'
-        jdk 'JAVA_HOME'
+        maven 'maven-3.9.4'
     }
     
     stages {
-        stage('Git Checkout') {
+        
+        stage('Checkout GIT') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/amen9999/achat-devops.git'
+                echo 'Récupération du code depuis GitHub...'
             }
         }
         
-        stage('Build') {
+        stage('Maven Build') {
             steps {
-                sh 'cd achat/achat && mvn clean package -DskipTests'
+                echo 'Compilation Maven...'
+                dir('achat/achat') {
+                    sh 'mvn clean package -DskipTests'
+                }
             }
         }
         
-        stage('Tests') {
+        stage('Maven Test') {
             steps {
-                sh 'cd achat/achat && mvn test'
+                echo 'Tests unitaires...'
+                dir('achat/achat') {
+                    sh 'mvn test'
+                }
             }
         }
+
+        stage('SonarQube Analysis') {
+            steps {
+                dir('achat/achat') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'mvn sonar:sonar -Dsonar.projectKey=achat-devops'
+                    }
+                }
+            }
+        }
+        
     }
     
     post {
         success {
-            echo 'Pipeline exécuté avec succès !'
+            echo 'Build réussi !'
         }
         failure {
-            echo 'Pipeline échoué !'
+            echo 'Build échoué !'
         }
     }
 }
