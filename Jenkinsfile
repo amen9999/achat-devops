@@ -30,6 +30,26 @@ pipeline {
                 }
             }
         }
+
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Analyse SonarQube...'
+                withSonarQubeEnv('sonarqube') {
+                    dir('achat/achat') {
+                        sh 'mvn sonar:sonar'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Nexus') {
+            steps {
+                echo 'Déploiement vers Nexus...'
+                dir('achat/achat') {
+                    sh 'mvn deploy -DskipTests'
+                }
+            }
+        }
         
     }
     
