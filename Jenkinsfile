@@ -43,13 +43,14 @@ pipeline {
         }
 
         stage('Deploy to Nexus') {
-            steps {
-                echo 'Déploiement vers Nexus...'
-                dir('achat/achat') {
-                    sh 'mvn deploy -DskipTests'
-                }
-            }
+    steps {
+        echo 'Déploiement vers Nexus...'
+        dir('achat/achat') {
+            sh 'mvn deploy -DskipTests -DaltDeploymentRepository=nexus-releases::default::http://172.28.128.0:8081/repository/maven-releases/'
         }
+    }
+}
+
         
     }
     
