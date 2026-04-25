@@ -1,8 +1,8 @@
-FROM openjdk:11-jre-slim
+FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY target/achat-1.0.jar app.jar
+COPY achat-1.0.jar app.jar
 
 EXPOSE 8080
 
